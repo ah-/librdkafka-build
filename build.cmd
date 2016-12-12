@@ -1,8 +1,29 @@
 ::@echo off
+
 cd %~dp0
 
 SETLOCAL
 SET NUGET_VERSION=latest
+
+mkdir lib
+mkdir lib\x64
+mkdir lib\x86
+
+echo git clone OpenSSL
+git clone -q --branch=OpenSSL_1_0_2-stable https://github.com/openssl/openssl.git
+CALL "build-openssl_x64.cmd"
+CALL "build-openssl_x86.cmd"
+
+echo git clone zlib
+git clone -q --branch=master https://github.com/madler/zlib.git
+CALL "build-zlib_x64.cmd"
+CALL "build-zlib_x86.cmd"
+
+
+
+echo git clone librdkafka
+git clone -q --branch=0.9.2.x https://github.com/edenhill/librdkafka.git
+
 
 IF EXIST nuget.exe goto build
 echo Downloading nuget.exe
@@ -38,10 +59,9 @@ if not exist package-win\runtimes\win7-x86\native md package-win\runtimes\win7-x
 if not exist package-win\runtimes\win7-x64\native md package-win\runtimes\win7-x64\native || exit /b
 
 copy librdkafka\win32\Release\librdkafka.dll package-win\runtimes\win7-x86\native || exit /b
-copy librdkafka\win32\Release\zlib.dll package-win\runtimes\win7-x86\native || exit /b
 
 copy librdkafka\win32\x64\Release\librdkafka.dll package-win\runtimes\win7-x64\native || exit /b
-copy librdkafka\win32\x64\Release\zlib.dll package-win\runtimes\win7-x64\native || exit /b
+
 
 if defined APPVEYOR_BUILD_VERSION (
 nuget.exe pack librdkafka.nuspec -Version %APPVEYOR_BUILD_VERSION% -NoPackageAnalysis -Properties TargetOS=Windows -BasePath package-win || exit /b

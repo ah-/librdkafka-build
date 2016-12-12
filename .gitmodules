@@ -1,3 +1,9 @@
 [submodule "librdkafka"]
 	path = librdkafka
 	url = https://github.com/edenhill/librdkafka
+[submodule "zlib"]
+	path = zlib
+	url = https://github.com/madler/zlib.git
+[submodule "openssl"]
+	path = openssl
+	url = https://github.com/openssl/openssl.git
